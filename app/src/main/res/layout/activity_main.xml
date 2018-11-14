@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/textview_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seekbar_media_position"
+        tools:text="0.00" />
+
     <ImageView
         android:id="@+id/imageview_album_art"
         android:layout_width="300dp"
@@ -47,11 +57,22 @@
         style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:max="100"
+        app:layout_constraintEnd_toStartOf="@+id/textview_duration"
+        app:layout_constraintStart_toEndOf="@+id/textview_current_time"
+        app:layout_constraintTop_toBottomOf="@+id/imageview_album_art" />
+
+    <TextView
+        android:id="@+id/textview_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageview_album_art" />
+        app:layout_constraintTop_toTopOf="@+id/seekbar_media_position"
+        tools:text="0.00" />
 </android.support.constraint.ConstraintLayout>
