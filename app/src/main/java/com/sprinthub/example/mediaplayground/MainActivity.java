@@ -1,9 +1,9 @@
 package com.sprinthub.example.mediaplayground;
 
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +15,12 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StreamDownloadTask;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mDurationTv;
 
     private Handler mHandler = new Handler();
+
+    OutputStream mOutputStream;
 
 
     @Override
@@ -118,15 +124,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        try {
+            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+            FileDescriptor fileDescriptor = pipe[0].getFileDescriptor();
+            mPlayer.setDataSource(fileDescriptor);
+            mOutputStream = new ParcelFileDescriptor.AutoCloseOutputStream(pipe[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         mStorageReference = FirebaseStorage.getInstance().getReference("music/bensound64.m4a");
-        mStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//        mStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                mAlbumArtImageView.setImageResource(R.drawable.betterdays);
+//                mSampleMusicUri = uri.toString();
+//                setupMediaPlayer();
+//            }
+//        });
+        mStorageReference.getStream().addOnSuccessListener(new OnSuccessListener<StreamDownloadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(Uri uri) {
-                mAlbumArtImageView.setImageResource(R.drawable.betterdays);
-                mSampleMusicUri = uri.toString();
-                setupMediaPlayer();
+            public void onSuccess(StreamDownloadTask.TaskSnapshot taskSnapshot) {
+                InputStream inputStream = taskSnapshot.getStream();
+                long totalByteCount = taskSnapshot.getTotalByteCount();
+
+                for (int i = 0; i < totalByteCount; i += 10240) {
+                    byte[] bytes = new byte[10240];
+                    try {
+                        int numBytes = inputStream.read(bytes);
+                        mOutputStream.write(bytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
