@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.sprinthub.example.mediaplayground.data.Song"/>
+
+        <variable
+            name="callback"
+            type="com.sprinthub.example.mediaplayground.ItemClickCallback"/>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> callback.onItemClick(item)}">
+
+        <TextView
+            android:id="@+id/textview_music_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:text="@{item.title}"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toTopOf="@+id/textview_music_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textview_album_art"
+            app:layout_constraintTop_toTopOf="@+id/textview_album_art"
+            tools:text="Song number 1" />
+
+        <ImageView
+            android:id="@+id/textview_album_art"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Album art"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/textview_music_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:text='@{(item.artist.equals("&lt;unknown>") ? "Unknown Artist" : item.artist).concat(" - ").concat(item.album)}'
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toBottomOf="@+id/textview_album_art"
+            app:layout_constraintEnd_toEndOf="@+id/textview_music_title"
+            app:layout_constraintStart_toStartOf="@+id/textview_music_title"
+            app:layout_constraintTop_toBottomOf="@+id/textview_music_title"
+            tools:text="Artist - Album" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
