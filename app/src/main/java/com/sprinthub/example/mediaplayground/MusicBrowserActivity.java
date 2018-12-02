@@ -1,8 +1,11 @@
 package com.sprinthub.example.mediaplayground;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.sprinthub.example.mediaplayground.data.Song;
@@ -83,5 +86,21 @@ public class MusicBrowserActivity extends AppCompatActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_search) {
+            Intent searchIntent = new Intent(this, MusicSearchActivity.class);
+            startActivity(searchIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

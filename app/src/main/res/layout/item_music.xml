@@ -27,10 +27,10 @@
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:text="@{item.title}"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{item.title}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintBottom_toTopOf="@+id/textview_music_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textview_album_art"
@@ -49,16 +49,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.028"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/textview_music_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:text='@{(item.artist.equals("&lt;unknown>") ? "Unknown Artist" : item.artist).concat(" - ").concat(item.album)}'
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
+            android:text='@{(item.artist == "&lt;unknown>" ? "Unknown Artist" : item.artist) + " - " + item.album}'
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/textview_album_art"
             app:layout_constraintEnd_toEndOf="@+id/textview_music_title"
             app:layout_constraintStart_toStartOf="@+id/textview_music_title"
@@ -70,5 +71,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="top" />
+
+        <TextView
+            android:id="@+id/textview_data1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text='@{String.format("Data1: %s", item.data1)}'
+            app:layout_constraintEnd_toEndOf="@+id/textview_music_description"
+            app:layout_constraintStart_toStartOf="@+id/textview_music_description"
+            app:layout_constraintTop_toBottomOf="@+id/textview_music_description"
+            tools:text="data1" />
+
+        <TextView
+            android:id="@+id/textview_data2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text='@{String.format("Data1: %s", item.data2)}'
+            app:layout_constraintEnd_toEndOf="@+id/textview_music_description"
+            app:layout_constraintStart_toStartOf="@+id/textview_data1"
+            app:layout_constraintTop_toBottomOf="@+id/textview_data1"
+            tools:text="data2" />
+
+        <TextView
+            android:id="@+id/textview_mimetype"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text='@{String.format("MimeType: %s", item.mimeType)}'
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textview_data2"
+            app:layout_constraintStart_toStartOf="@+id/textview_data2"
+            app:layout_constraintTop_toBottomOf="@+id/textview_data2"
+            tools:text="Mimetype" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

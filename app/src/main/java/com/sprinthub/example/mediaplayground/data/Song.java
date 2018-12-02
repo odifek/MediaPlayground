@@ -1,6 +1,7 @@
 package com.sprinthub.example.mediaplayground.data;
 
 import android.database.Cursor;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 
 import java.util.List;
@@ -22,6 +23,18 @@ public class Song {
 
     public String albumArtUri;
     public List<String> genres;
+    public String mimeType;
+    public String data1;
+    public String data2;
+    public Song(Cursor cursor, String search) {
+        id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+        title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+        artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
+        album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
+        mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE));
+        data1 = cursor.getString(cursor.getColumnIndexOrThrow("data1"));
+        data2 = cursor.getString(cursor.getColumnIndexOrThrow("data2"));
+    }
 
     public Song(Cursor cursor) {
         title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TITLE));
@@ -46,9 +59,11 @@ public class Song {
 
         if (id != song.id) return false;
         if (duration != song.duration) return false;
+        if (albumId != song.albumId) return false;
         if (year != song.year) return false;
         if (artistId != song.artistId) return false;
-        if (!title.equals(song.title)) return false;
+        if (bookmark != song.bookmark) return false;
+        if (title != null ? !title.equals(song.title) : song.title != null) return false;
         if (album != null ? !album.equals(song.album) : song.album != null) return false;
         return artist != null ? artist.equals(song.artist) : song.artist == null;
     }
@@ -57,8 +72,9 @@ public class Song {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (duration ^ (duration >>> 32));
-        result = 31 * result + title.hashCode();
+        result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (album != null ? album.hashCode() : 0);
+        result = 31 * result + (int) (albumId ^ (albumId >>> 32));
         result = 31 * result + year;
         result = 31 * result + (artist != null ? artist.hashCode() : 0);
         result = 31 * result + (int) (artistId ^ (artistId >>> 32));

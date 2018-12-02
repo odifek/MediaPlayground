@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Media Playground</string>
     <string name="permission_denied">Permission to read storage was not granted. Please do grant it</string>
+    <string name="search_music">Search Music</string>
 </resources>
