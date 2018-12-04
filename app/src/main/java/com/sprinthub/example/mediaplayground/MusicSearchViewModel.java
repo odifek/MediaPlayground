@@ -60,6 +60,7 @@ public class MusicSearchViewModel extends AndroidViewModel {
         SqlBrite sqlBrite = new SqlBrite.Builder().build();
         mResolver = sqlBrite
                 .wrapContentProvider(mContext.getContentResolver(), Schedulers.io());
+        mResolver.setLoggingEnabled(true);
 
     }
 
