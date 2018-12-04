@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
+import android.util.Log;
 
 import com.sprinthub.example.mediaplayground.data.Song;
 import com.squareup.sqlbrite3.BriteContentResolver;
@@ -27,6 +28,7 @@ import io.reactivex.subjects.PublishSubject;
 
 public class MusicSearchViewModel extends AndroidViewModel {
 
+    private static final String TAG = MusicSearchViewModel.class.getSimpleName();
     private Context mContext;
     public MusicSearchViewModel(@NonNull Application application) {
         super(application);
@@ -70,7 +72,7 @@ public class MusicSearchViewModel extends AndroidViewModel {
         Uri search = Uri.parse("content://media/external/audio/search/fancy/" + Uri.encode(query));
         QueryObservable queryObservable =
                 mResolver.createQuery(search,
-                        ccols,
+                        null,
                         null,
                         null,
                         null,
