@@ -2,4 +2,6 @@
     <string name="app_name">Media Playground</string>
     <string name="permission_denied">Permission to read storage was not granted. Please do grant it</string>
     <string name="search_music">Search Music</string>
+    <string name="notification_skip_to_previous">Skip to previous track</string>
+    <string name="notification_now_playing">Now Playing</string>
 </resources>

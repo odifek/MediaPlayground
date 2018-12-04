@@ -3,6 +3,7 @@ package com.sprinthub.example.mediaplayground.data;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.media.MediaMetadataCompat;
 
 import java.util.List;
 
@@ -48,6 +49,29 @@ public class Song {
         dateAdded = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DATE_ADDED));
         bookmark = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.BOOKMARK));
         track = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TRACK));
+        mediaUri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+    }
+
+    public MediaMetadataCompat getSongMeta() {
+        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
+
+        builder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, mediaUri);
+        builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title);
+        builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album);
+        builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist);
+        builder.putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, track);
+
+        return builder.build();
+    }
+
+    public static Query getQuery() {
+        return new Query.Builder()
+                .uri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+                .projection(null)
+                .selection(MediaStore.Audio.Media.IS_MUSIC + "=1")
+                .args(null)
+                .sort(MediaStore.Audio.Media.TITLE)
+                .build();
     }
 
     @Override
