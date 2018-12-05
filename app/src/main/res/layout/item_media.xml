@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="mediaItem"
+            type="com.sprinthub.example.mediaplayground.models.MediaItemData"/>
+        <variable
+            name="callback"
+            type="com.sprinthub.example.mediaplayground.ItemClickCallback"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> callback.onItemClick(mediaItem)}">
+
+
+        <TextView
+            android:id="@+id/textview_song_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@{mediaItem.title}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Song title" />
+
+        <TextView
+            android:id="@+id/textview_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:text="@{mediaItem.subtitle}"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textview_song_title"
+            app:layout_constraintStart_toStartOf="@+id/textview_song_title"
+            app:layout_constraintTop_toBottomOf="@+id/textview_song_title"
+            tools:text="Album - Artist" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
