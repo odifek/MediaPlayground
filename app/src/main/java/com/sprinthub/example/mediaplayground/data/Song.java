@@ -1,8 +1,10 @@
 package com.sprinthub.example.mediaplayground.data;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import java.util.List;
@@ -21,6 +23,8 @@ public class Song {
     public long dateAdded;
     public long bookmark;
     public long track;
+
+    public String mediaId;
 
     public String albumArtUri;
     public List<String> genres;
@@ -50,8 +54,11 @@ public class Song {
         bookmark = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.BOOKMARK));
         track = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TRACK));
         mediaUri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+        // Eg 1234_even_i
+        mediaId = id + "_" + title.toLowerCase().replace(" ", "_");
     }
 
+    @SuppressLint("WrongConstant")
     public MediaMetadataCompat getSongMeta() {
         MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
 
@@ -60,7 +67,8 @@ public class Song {
         builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album);
         builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist);
         builder.putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, track);
-
+        builder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId);
+        builder.putLong("MEDIA_ITEM_FLAG", MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
         return builder.build();
     }
 
@@ -70,6 +78,18 @@ public class Song {
                 .projection(null)
                 .selection(MediaStore.Audio.Media.IS_MUSIC + "=1")
                 .args(null)
+                .sort(MediaStore.Audio.Media.TITLE)
+                .build();
+    }
+
+    // Query for getting a single item
+    public static Query getQuery(String id) {
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "=1" + " AND " + MediaStore.Audio.Media._ID + "=?";
+        return new Query.Builder()
+                .uri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+                .projection(null)
+                .selection(selection)
+                .args(new String[]{id})
                 .sort(MediaStore.Audio.Media.TITLE)
                 .build();
     }

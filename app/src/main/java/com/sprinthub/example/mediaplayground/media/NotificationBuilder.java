@@ -31,7 +31,7 @@ import static android.support.v4.media.session.PlaybackStateCompat.ACTION_STOP;
 public class NotificationBuilder {
 
     private static final String NOW_PLAYING_CHANNEL = "com.sprinthub.example.mediaplayground.media.NOW_PLAYING";
-    static final int NOW_PLAYING_NOTIFICATION = 0xb339;
+    static final int NOW_PLAYING_NOTIFICATION = 0xb449;
 
     private Context mContext;
     private NotificationManager platformNotificationManager;

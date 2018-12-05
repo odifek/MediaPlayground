@@ -1,5 +1,6 @@
 package com.sprinthub.example.mediaplayground.media;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -29,7 +30,9 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.sprinthub.example.mediaplayground.Injection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +40,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.sprinthub.example.mediaplayground.media.NotificationBuilder.NOW_PLAYING_NOTIFICATION;
 
@@ -83,6 +90,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         mController = new MediaControllerCompat(this, mSession);
         mController.registerCallback(new MediaControllerCallback());
 
+        mNoisyReceiver = new BecomingNoisyReceiver(this, mSession.getSessionToken());
+
         mNotificationBuilder= new NotificationBuilder(this);
         mNotificationManager = NotificationManagerCompat.from(this);
 
@@ -92,17 +101,53 @@ public class MusicService extends MediaBrowserServiceCompat {
         DefaultDataSourceFactory dataSourceFactory =
                 new DefaultDataSourceFactory(this,
                         Util.getUserAgent(this, MEDIA_PLAYGROUND_USER_AGENT), null);
+
+        MediaPlaybackPreparer playbackPreparer =
+                new MediaPlaybackPreparer(Injection.getMusicRepository(),
+                        mExoPlayer,
+                        dataSourceFactory);
+        mMediaSessionConnector.setPlayer(mExoPlayer, playbackPreparer);
+        mMediaSessionConnector.setQueueNavigator(new MediaQueueNavigator(mSession));
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+
+        mExoPlayer.stop(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        mSession.setActive(false);
+        mSession.release();
     }
 
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
-        return null;
+        return new BrowserRoot("__MEDIA_ROOT__", null);
     }
 
     @Override
     public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        result.detach();
 
+        Disposable disposable = Injection.getMusicRepository().getSongsMetadata()
+                .map(this::toMediaItems)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result::sendResult, error -> result.sendError(null));
+    }
+
+    @SuppressLint("WrongConstant")
+    private List<MediaBrowserCompat.MediaItem> toMediaItems(List<MediaMetadataCompat> metadatas) {
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>(metadatas.size());
+
+        for (MediaMetadataCompat metadata :
+                metadatas) {
+            mediaItems.add(new MediaBrowserCompat.MediaItem(metadata.getDescription(), (int) metadata.getLong("MEDIA_ITEM_FLAG")));
+        }
+        return mediaItems;
     }
 
     private class MediaControllerCallback extends MediaControllerCompat.Callback {
